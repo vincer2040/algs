@@ -41,6 +41,7 @@ ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
 
 void bubble_sort(void* arr, size_t len, size_t data_size, CmpFn fn);
+void quick_sort(void* arr, size_t arr_len, size_t data_size, CmpFn* fn);
 
 Queue queue_new(size_t data_size);
 int queue_peek(Queue* q, void* out);
