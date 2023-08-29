@@ -19,5 +19,6 @@ ssize_t binary_search(void* haystack, void* needle, size_t len,
             lo = m + 1;
         }
     } while (lo < hi);
+
     return -1;
 }
