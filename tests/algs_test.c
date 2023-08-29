@@ -12,7 +12,7 @@ int int_cmp(void* a, void* b) {
     return ai - bi;
 }
 
-START_TEST(test_it_works) {
+START_TEST(binary_search_test) {
     int foo[] = {1, 3, 4, 69, 71, 81, 90, 99, 420, 1337, 69420};
     size_t foo_len = sizeof foo / sizeof foo[0];
     size_t s = sizeof(int);
@@ -33,12 +33,25 @@ START_TEST(test_it_works) {
 }
 END_TEST
 
+START_TEST(bubble_sort_test) {
+    int arr[] = {9, 3, 7, 4, 69, 420, 42};
+    size_t i, arr_len = sizeof arr / sizeof arr[0];
+
+    bubble_sort(arr, arr_len, sizeof(int), int_cmp);
+
+    for (i = 0; i < arr_len - 1; ++i) {
+        ck_assert_int_lt(arr[i], arr[i + 1]);
+    }
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
     s = suite_create("algs_test");
     tc_core = tcase_create("Core");
-    tcase_add_test(tc_core, test_it_works);
+    tcase_add_test(tc_core, binary_search_test);
+    tcase_add_test(tc_core, bubble_sort_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
