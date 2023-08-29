@@ -1,6 +1,6 @@
 #include "algs.h"
 
-void pre_walk(BinaryNode* cur, vec* vec) {
+static void pre_walk(BinaryNode* cur, vec* vec) {
     if (!cur) {
         return;
     }

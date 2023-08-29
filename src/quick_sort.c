@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-ssize_t partition(void* arr, ssize_t lo, ssize_t hi, size_t data_size, CmpFn* fn) {
+static ssize_t partition(void* arr, ssize_t lo, ssize_t hi, size_t data_size, CmpFn* fn) {
     unsigned char* uarr = ((unsigned char*)arr);
     void *x, *pivot = uarr + (hi * data_size);
     size_t i;
@@ -28,7 +28,7 @@ ssize_t partition(void* arr, ssize_t lo, ssize_t hi, size_t data_size, CmpFn* fn
     return idx;
 }
 
-void qs(void* arr, ssize_t lo, ssize_t hi, size_t data_size, CmpFn* fn) {
+static void qs(void* arr, ssize_t lo, ssize_t hi, size_t data_size, CmpFn* fn) {
     ssize_t pivot;
     if (lo >= hi) {
         return;
