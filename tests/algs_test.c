@@ -89,6 +89,51 @@ START_TEST(queue_test) {
 }
 END_TEST
 
+START_TEST(stack_test) {
+    Stack s = stack_new(sizeof(int));
+    int a1[] = {5, 7, 9};
+    size_t i, a1_len = sizeof a1 / sizeof a1[0];
+    int a, b;
+
+    for (i = 0; i < a1_len; ++i) {
+        stack_push(&s, &a1[i]);
+    }
+
+    stack_pop(&s, &a);
+    ck_assert_int_eq(a, 9);
+    ck_assert_uint_eq(s.len, 2);
+
+    a = 11;
+    stack_push(&s, &a);
+
+    stack_pop(&s, &b);
+    ck_assert_int_eq(b, 11);
+
+    stack_pop(&s, &b);
+    ck_assert_int_eq(b, 7);
+
+    stack_peek(&s, &b);
+    ck_assert_int_eq(b, 5);
+
+    stack_pop(&s, &b);
+    ck_assert_int_eq(b, 5);
+
+    ck_assert_int_eq(stack_pop(&s, &b), -1);
+    ck_assert_uint_eq(s.len, 0);
+
+    a = 69;
+
+    stack_push(&s, &a);
+
+    stack_peek(&s, &b);
+
+    ck_assert_int_eq(b, 69);
+    ck_assert_uint_eq(s.len, 1);
+
+    stack_free(&s, NULL);
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
@@ -97,6 +142,7 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, binary_search_test);
     tcase_add_test(tc_core, bubble_sort_test);
     tcase_add_test(tc_core, queue_test);
+    tcase_add_test(tc_core, stack_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
