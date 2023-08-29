@@ -12,6 +12,35 @@ int int_cmp(void* a, void* b) {
     return ai - bi;
 }
 
+BinaryNode* tree(void) {
+    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
+        a8 = 5, a9 = 7;
+    BinaryNode* h = binary_node_new(&a0, sizeof(int));
+
+    h->right = binary_node_new(&a1, sizeof(int));
+    h->right->right = binary_node_new(&a2, sizeof(int));
+    h->right->right->right = NULL;
+    h->right->right->left = NULL;
+    h->right->left = binary_node_new(&a3, sizeof(int));
+    h->right->left->right = binary_node_new(&a4, sizeof(int));
+    h->right->left->right->right = NULL;
+    h->right->left->right->left = NULL;
+    h->right->left->left = binary_node_new(&a5, sizeof(int));
+    h->right->left->left->right = NULL;
+    h->right->left->left->left = NULL;
+    h->left = binary_node_new(&a6, sizeof(int));
+    h->left->right = binary_node_new(&a7, sizeof(int));
+    h->left->right->right = NULL;
+    h->left->right->left = NULL;
+    h->left->left = binary_node_new(&a8, sizeof(int));
+    h->left->left->right = binary_node_new(&a9, sizeof(int));
+    h->left->left->right->right = NULL;
+    h->left->left->right->left = NULL;
+    h->left->left->left = NULL;
+
+    return h;
+}
+
 START_TEST(binary_search_test) {
     int foo[] = {1, 3, 4, 69, 71, 81, 90, 99, 420, 1337, 69420};
     size_t foo_len = sizeof foo / sizeof foo[0];
@@ -146,35 +175,12 @@ START_TEST(qs_test) {
 END_TEST
 
 START_TEST(bt_pre_order_test) {
-    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
-        a8 = 5, a9 = 7;
+    BinaryNode* h = tree();
     int exp[] = {
         20, 10, 5, 7, 15, 50, 30, 29, 45, 100,
     };
     vec* v;
     size_t i, len;
-    BinaryNode* h = binary_node_new(&a0, sizeof(int));
-
-    h->right = binary_node_new(&a1, sizeof(int));
-    h->right->right = binary_node_new(&a2, sizeof(int));
-    h->right->right->right = NULL;
-    h->right->right->left = NULL;
-    h->right->left = binary_node_new(&a3, sizeof(int));
-    h->right->left->right = binary_node_new(&a4, sizeof(int));
-    h->right->left->right->right = NULL;
-    h->right->left->right->left = NULL;
-    h->right->left->left = binary_node_new(&a5, sizeof(int));
-    h->right->left->left->right = NULL;
-    h->right->left->left->left = NULL;
-    h->left = binary_node_new(&a6, sizeof(int));
-    h->left->right = binary_node_new(&a7, sizeof(int));
-    h->left->right->right = NULL;
-    h->left->right->left = NULL;
-    h->left->left = binary_node_new(&a8, sizeof(int));
-    h->left->left->right = binary_node_new(&a9, sizeof(int));
-    h->left->left->right->right = NULL;
-    h->left->left->right->left = NULL;
-    h->left->left->left = NULL;
 
     v = pre_order_search(h, sizeof(int));
     len = v->len;
@@ -189,35 +195,12 @@ START_TEST(bt_pre_order_test) {
 END_TEST
 
 START_TEST(bt_in_order_test) {
-    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
-        a8 = 5, a9 = 7;
+    BinaryNode* h = tree();
     int exp[] = {
         5, 7, 10, 15, 20, 29, 30, 45, 50, 100,
     };
     vec* v;
     size_t i, len;
-    BinaryNode* h = binary_node_new(&a0, sizeof(int));
-
-    h->right = binary_node_new(&a1, sizeof(int));
-    h->right->right = binary_node_new(&a2, sizeof(int));
-    h->right->right->right = NULL;
-    h->right->right->left = NULL;
-    h->right->left = binary_node_new(&a3, sizeof(int));
-    h->right->left->right = binary_node_new(&a4, sizeof(int));
-    h->right->left->right->right = NULL;
-    h->right->left->right->left = NULL;
-    h->right->left->left = binary_node_new(&a5, sizeof(int));
-    h->right->left->left->right = NULL;
-    h->right->left->left->left = NULL;
-    h->left = binary_node_new(&a6, sizeof(int));
-    h->left->right = binary_node_new(&a7, sizeof(int));
-    h->left->right->right = NULL;
-    h->left->right->left = NULL;
-    h->left->left = binary_node_new(&a8, sizeof(int));
-    h->left->left->right = binary_node_new(&a9, sizeof(int));
-    h->left->left->right->right = NULL;
-    h->left->left->right->left = NULL;
-    h->left->left->left = NULL;
 
     v = in_order_search(h, sizeof(int));
     len = v->len;
@@ -232,35 +215,12 @@ START_TEST(bt_in_order_test) {
 END_TEST
 
 START_TEST(bt_post_order_test) {
-    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
-        a8 = 5, a9 = 7;
+    BinaryNode* h = tree();
     int exp[] = {
         7, 5, 15, 10, 29, 45, 30, 100, 50, 20,
     };
     vec* v;
     size_t i, len;
-    BinaryNode* h = binary_node_new(&a0, sizeof(int));
-
-    h->right = binary_node_new(&a1, sizeof(int));
-    h->right->right = binary_node_new(&a2, sizeof(int));
-    h->right->right->right = NULL;
-    h->right->right->left = NULL;
-    h->right->left = binary_node_new(&a3, sizeof(int));
-    h->right->left->right = binary_node_new(&a4, sizeof(int));
-    h->right->left->right->right = NULL;
-    h->right->left->right->left = NULL;
-    h->right->left->left = binary_node_new(&a5, sizeof(int));
-    h->right->left->left->right = NULL;
-    h->right->left->left->left = NULL;
-    h->left = binary_node_new(&a6, sizeof(int));
-    h->left->right = binary_node_new(&a7, sizeof(int));
-    h->left->right->right = NULL;
-    h->left->right->left = NULL;
-    h->left->left = binary_node_new(&a8, sizeof(int));
-    h->left->left->right = binary_node_new(&a9, sizeof(int));
-    h->left->left->right->right = NULL;
-    h->left->left->right->left = NULL;
-    h->left->left->left = NULL;
 
     v = post_order_search(h, sizeof(int));
     len = v->len;
