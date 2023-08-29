@@ -40,7 +40,7 @@ START_TEST(bubble_sort_test) {
     bubble_sort(arr, arr_len, sizeof(int), int_cmp);
 
     for (i = 0; i < arr_len - 1; ++i) {
-        ck_assert_int_lt(arr[i], arr[i + 1]);
+        ck_assert_int_le(arr[i], arr[i + 1]);
     }
 }
 END_TEST
@@ -140,7 +140,7 @@ START_TEST(qs_test) {
     quick_sort(arr, len, sizeof arr[0], int_cmp);
 
     for (i = 0; i < len - 1; ++i) {
-        ck_assert_int_lt(arr[i], arr[i + 1]);
+        ck_assert_int_le(arr[i], arr[i + 1]);
     }
 }
 END_TEST
