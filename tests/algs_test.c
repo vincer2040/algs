@@ -134,6 +134,17 @@ START_TEST(stack_test) {
 }
 END_TEST
 
+START_TEST(qs_test) {
+    int arr[] = {9, 3, 7, 4, 69, 420, 42, -1};
+    size_t i, len = sizeof arr / sizeof arr[0];
+    quick_sort(arr, len, sizeof arr[0], int_cmp);
+
+    for (i = 0; i < len - 1; ++i) {
+        ck_assert_int_lt(arr[i], arr[i + 1]);
+    }
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
@@ -143,6 +154,7 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, bubble_sort_test);
     tcase_add_test(tc_core, queue_test);
     tcase_add_test(tc_core, stack_test);
+    tcase_add_test(tc_core, qs_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
