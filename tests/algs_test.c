@@ -23,17 +23,17 @@ START_TEST(test_it_works) {
     int a4 = 1;
     int a5 = 0;
 
-    ck_assert_int_eq(binary_search_v2(foo, &a0, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a0, foo_len, sizeof(int), int_cmp),
                      3);
-    ck_assert_int_eq(binary_search_v2(foo, &a1, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a1, foo_len, sizeof(int), int_cmp),
                      -1);
-    ck_assert_int_eq(binary_search_v2(foo, &a2, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a2, foo_len, sizeof(int), int_cmp),
                      10);
-    ck_assert_int_eq(binary_search_v2(foo, &a3, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a3, foo_len, sizeof(int), int_cmp),
                      -1);
-    ck_assert_int_eq(binary_search_v2(foo, &a4, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a4, foo_len, sizeof(int), int_cmp),
                      0);
-    ck_assert_int_eq(binary_search_v2(foo, &a5, foo_len, sizeof(int), int_cmp),
+    ck_assert_int_eq(binary_search(foo, &a5, foo_len, sizeof(int), int_cmp),
                      -1);
 }
 END_TEST

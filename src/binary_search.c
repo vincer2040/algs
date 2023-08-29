@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-ssize_t binary_search_v2(void* haystack, void* needle, size_t len,
-                         size_t data_size, CmpFn fn) {
+ssize_t binary_search(void* haystack, void* needle, size_t len,
+                      size_t data_size, CmpFn fn) {
     size_t lo = 0;
     size_t hi = len;
 
