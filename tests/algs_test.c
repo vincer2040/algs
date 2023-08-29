@@ -145,7 +145,136 @@ START_TEST(qs_test) {
 }
 END_TEST
 
-Suite* ht_suite() {
+START_TEST(bt_pre_order_test) {
+    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
+        a8 = 5, a9 = 7;
+    int exp[] = {
+        20, 10, 5, 7, 15, 50, 30, 29, 45, 100,
+    };
+    vec* v;
+    size_t i, len;
+    BinaryNode* h = binary_node_new(&a0, sizeof(int));
+
+    h->right = binary_node_new(&a1, sizeof(int));
+    h->right->right = binary_node_new(&a2, sizeof(int));
+    h->right->right->right = NULL;
+    h->right->right->left = NULL;
+    h->right->left = binary_node_new(&a3, sizeof(int));
+    h->right->left->right = binary_node_new(&a4, sizeof(int));
+    h->right->left->right->right = NULL;
+    h->right->left->right->left = NULL;
+    h->right->left->left = binary_node_new(&a5, sizeof(int));
+    h->right->left->left->right = NULL;
+    h->right->left->left->left = NULL;
+    h->left = binary_node_new(&a6, sizeof(int));
+    h->left->right = binary_node_new(&a7, sizeof(int));
+    h->left->right->right = NULL;
+    h->left->right->left = NULL;
+    h->left->left = binary_node_new(&a8, sizeof(int));
+    h->left->left->right = binary_node_new(&a9, sizeof(int));
+    h->left->left->right->right = NULL;
+    h->left->left->right->left = NULL;
+    h->left->left->left = NULL;
+
+    v = pre_order_search(h, sizeof(int));
+    len = v->len;
+    for (i = 0; i < len; ++i) {
+        int* at = ((int*)(v->data + (i * v->data_size)));
+        ck_assert_int_eq(*at, exp[i]);
+    }
+
+    vec_free(v, NULL);
+    binary_tree_free(h, NULL);
+}
+END_TEST
+
+START_TEST(bt_in_order_test) {
+    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
+        a8 = 5, a9 = 7;
+    int exp[] = {
+        5, 7, 10, 15, 20, 29, 30, 45, 50, 100,
+    };
+    vec* v;
+    size_t i, len;
+    BinaryNode* h = binary_node_new(&a0, sizeof(int));
+
+    h->right = binary_node_new(&a1, sizeof(int));
+    h->right->right = binary_node_new(&a2, sizeof(int));
+    h->right->right->right = NULL;
+    h->right->right->left = NULL;
+    h->right->left = binary_node_new(&a3, sizeof(int));
+    h->right->left->right = binary_node_new(&a4, sizeof(int));
+    h->right->left->right->right = NULL;
+    h->right->left->right->left = NULL;
+    h->right->left->left = binary_node_new(&a5, sizeof(int));
+    h->right->left->left->right = NULL;
+    h->right->left->left->left = NULL;
+    h->left = binary_node_new(&a6, sizeof(int));
+    h->left->right = binary_node_new(&a7, sizeof(int));
+    h->left->right->right = NULL;
+    h->left->right->left = NULL;
+    h->left->left = binary_node_new(&a8, sizeof(int));
+    h->left->left->right = binary_node_new(&a9, sizeof(int));
+    h->left->left->right->right = NULL;
+    h->left->left->right->left = NULL;
+    h->left->left->left = NULL;
+
+    v = in_order_search(h, sizeof(int));
+    len = v->len;
+    for (i = 0; i < len; ++i) {
+        int* at = ((int*)(v->data + (i * v->data_size)));
+        ck_assert_int_eq(*at, exp[i]);
+    }
+
+    vec_free(v, NULL);
+    binary_tree_free(h, NULL);
+}
+END_TEST
+
+START_TEST(bt_post_order_test) {
+    int a0 = 20, a1 = 50, a2 = 100, a3 = 30, a4 = 45, a5 = 29, a6 = 10, a7 = 15,
+        a8 = 5, a9 = 7;
+    int exp[] = {
+        7, 5, 15, 10, 29, 45, 30, 100, 50, 20,
+    };
+    vec* v;
+    size_t i, len;
+    BinaryNode* h = binary_node_new(&a0, sizeof(int));
+
+    h->right = binary_node_new(&a1, sizeof(int));
+    h->right->right = binary_node_new(&a2, sizeof(int));
+    h->right->right->right = NULL;
+    h->right->right->left = NULL;
+    h->right->left = binary_node_new(&a3, sizeof(int));
+    h->right->left->right = binary_node_new(&a4, sizeof(int));
+    h->right->left->right->right = NULL;
+    h->right->left->right->left = NULL;
+    h->right->left->left = binary_node_new(&a5, sizeof(int));
+    h->right->left->left->right = NULL;
+    h->right->left->left->left = NULL;
+    h->left = binary_node_new(&a6, sizeof(int));
+    h->left->right = binary_node_new(&a7, sizeof(int));
+    h->left->right->right = NULL;
+    h->left->right->left = NULL;
+    h->left->left = binary_node_new(&a8, sizeof(int));
+    h->left->left->right = binary_node_new(&a9, sizeof(int));
+    h->left->left->right->right = NULL;
+    h->left->left->right->left = NULL;
+    h->left->left->left = NULL;
+
+    v = post_order_search(h, sizeof(int));
+    len = v->len;
+    for (i = 0; i < len; ++i) {
+        int* at = ((int*)(v->data + (i * v->data_size)));
+        ck_assert_int_eq(*at, exp[i]);
+    }
+
+    vec_free(v, NULL);
+    binary_tree_free(h, NULL);
+}
+END_TEST
+
+Suite* suite() {
     Suite* s;
     TCase* tc_core;
     s = suite_create("algs_test");
@@ -155,6 +284,9 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, queue_test);
     tcase_add_test(tc_core, stack_test);
     tcase_add_test(tc_core, qs_test);
+    tcase_add_test(tc_core, bt_pre_order_test);
+    tcase_add_test(tc_core, bt_in_order_test);
+    tcase_add_test(tc_core, bt_post_order_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
@@ -163,7 +295,7 @@ int main() {
     int number_failed;
     Suite* s;
     SRunner* sr;
-    s = ht_suite();
+    s = suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
