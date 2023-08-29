@@ -31,6 +31,12 @@ typedef struct {
     Node* tail;
 } Queue;
 
+typedef struct {
+    size_t len;
+    size_t data_size;
+    Node* head;
+} Stack;
+
 ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
 
@@ -41,5 +47,11 @@ int queue_peek(Queue* q, void* out);
 int queue_deque(Queue* q, void* out);
 int queue_enque(Queue* q, void* data);
 void queue_free(Queue* q, FreeFn* fn);
+
+Stack stack_new(size_t data_size);
+int stack_push(Stack* s, void* data);
+int stack_pop(Stack* s, void* out);
+int stack_peek(Stack* s, void* out);
+void stack_free(Stack* s, FreeFn* fn);
 
 #endif /*__ALGS_H__*/
