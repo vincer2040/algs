@@ -24,6 +24,12 @@ typedef struct Node {
     unsigned char data[];
 } Node;
 
+typedef struct BinaryNode {
+    struct BinaryNode* left;
+    struct BinaryNode* right;
+    unsigned char data[];
+} BinaryNode;
+
 typedef struct {
     size_t len;
     size_t data_size;
@@ -36,6 +42,13 @@ typedef struct {
     size_t data_size;
     Node* head;
 } Stack;
+
+typedef struct {
+    size_t len;
+    size_t cap;
+    size_t data_size;
+    unsigned char data[];
+} vec;
 
 ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
@@ -54,5 +67,16 @@ int stack_push(Stack* s, void* data);
 int stack_pop(Stack* s, void* out);
 int stack_peek(Stack* s, void* out);
 void stack_free(Stack* s, FreeFn* fn);
+
+BinaryNode* binary_node_new(void* data, size_t data_size);
+
+vec* vec_new(size_t data_size, size_t initial_cap);
+int vec_push(vec** vec, void* data);
+void vec_free(vec* vec, FreeFn* fn);
+
+vec* pre_order_search(BinaryNode* head, size_t data_size);
+vec* in_order_search(BinaryNode* head, size_t data_size);
+vec* post_order_search(BinaryNode* head, size_t data_size);
+void binary_tree_free(BinaryNode* head, FreeFn* fn);
 
 #endif /*__ALGS_H__*/
