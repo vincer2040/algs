@@ -45,6 +45,50 @@ START_TEST(bubble_sort_test) {
 }
 END_TEST
 
+START_TEST(queue_test) {
+    Queue q = queue_new(sizeof(int));
+    int a1[] = {5, 7, 9};
+    size_t i, a1_len = sizeof a1 / sizeof a1[0];
+    int a, b;
+
+    for (i = 0; i < a1_len; ++i) {
+        queue_enque(&q, &a1[i]);
+    }
+
+    queue_deque(&q, &a);
+
+    ck_assert_int_eq(a, 5);
+    ck_assert_uint_eq(q.len, 2);
+
+    a = 11;
+    queue_enque(&q, &a);
+
+    queue_deque(&q, &a);
+    ck_assert_uint_eq(a, 7);
+
+    queue_deque(&q, &a);
+    ck_assert_uint_eq(a, 9);
+
+    queue_peek(&q, &a);
+    ck_assert_uint_eq(a, 11);
+
+    queue_deque(&q, &a);
+    ck_assert_uint_eq(a, 11);
+
+    ck_assert_int_eq(queue_deque(&q, &a), -1);
+    ck_assert_uint_eq(q.len, 0);
+
+    // make sure it still works after emptying it
+    a = 69;
+    queue_enque(&q, &a);
+    queue_peek(&q, &b);
+    ck_assert_int_eq(b, 69);
+    ck_assert_uint_eq(q.len, 1);
+
+    queue_free(&q, NULL);
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
@@ -52,6 +96,7 @@ Suite* ht_suite() {
     tc_core = tcase_create("Core");
     tcase_add_test(tc_core, binary_search_test);
     tcase_add_test(tc_core, bubble_sort_test);
+    tcase_add_test(tc_core, queue_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
