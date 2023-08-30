@@ -41,6 +41,35 @@ BinaryNode* tree(void) {
     return h;
 }
 
+BinaryNode* tree2(void) {
+    BinaryNode* head;
+    int a = 20, b = 50, c = 30, d = 45, e = 49, f = 29, g = 21, h = 10, i = 15,
+        j = 5, k = 7;
+    head = binary_node_new(&a, sizeof(int));
+    head->right = binary_node_new(&b, sizeof(int));
+    head->right->right = NULL;
+    head->right->left = binary_node_new(&c, sizeof(int));
+    head->right->left->right = binary_node_new(&d, sizeof(int));
+    head->right->left->right->right = binary_node_new(&e, sizeof(int));
+    head->right->left->right->left = NULL;
+    head->right->left->left = binary_node_new(&f, sizeof(int));
+    head->right->left->left->right = NULL;
+    head->right->left->left->left = binary_node_new(&g, sizeof(int));
+    head->right->left->left->left->right = NULL;
+    head->right->left->left->left->left = NULL;
+    head->left = binary_node_new(&h, sizeof(int));
+    head->left->right = binary_node_new(&i, sizeof(int));
+    head->left->right->left = NULL;
+    head->left->right->right = NULL;
+    head->left->left = binary_node_new(&j, sizeof(int));
+    head->left->left->right = binary_node_new(&k, sizeof(int));
+    head->left->left->right->left = NULL;
+    head->left->left->right->right = NULL;
+    head->left->left->left = NULL;
+
+    return head;
+}
+
 START_TEST(binary_search_test) {
     int foo[] = {1, 3, 4, 69, 71, 81, 90, 99, 420, 1337, 69420};
     size_t foo_len = sizeof foo / sizeof foo[0];
@@ -251,6 +280,23 @@ START_TEST(bt_bfs_test) {
 }
 END_TEST
 
+START_TEST(bt_compare_test) {
+    BinaryNode* t1 = tree();
+    BinaryNode* t2 = tree();
+    BinaryNode* t3 = tree2();
+
+    bool a = bt_compare(t1, t2, int_cmp);
+    ck_assert(a == true);
+
+    bool b = bt_compare(t1, t3, int_cmp);
+    ck_assert(b == false);
+
+    binary_tree_free(t1, NULL);
+    binary_tree_free(t2, NULL);
+    binary_tree_free(t3, NULL);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -265,6 +311,7 @@ Suite* suite() {
     tcase_add_test(tc_core, bt_in_order_test);
     tcase_add_test(tc_core, bt_post_order_test);
     tcase_add_test(tc_core, bt_bfs_test);
+    tcase_add_test(tc_core, bt_compare_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
