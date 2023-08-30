@@ -297,6 +297,54 @@ START_TEST(bt_compare_test) {
 }
 END_TEST
 
+START_TEST(minheap_test) {
+    int a = 5, b = 3, c = 69, d = 420, e = 4, f = 1, g = 8, h = 7;
+    int out;
+    MinHeap* mh = minheap_new(sizeof(int), 32);
+
+    minheap_insert(&mh, &a, int_cmp);
+    minheap_insert(&mh, &b, int_cmp);
+    minheap_insert(&mh, &c, int_cmp);
+    minheap_insert(&mh, &d, int_cmp);
+    minheap_insert(&mh, &e, int_cmp);
+    minheap_insert(&mh, &f, int_cmp);
+    minheap_insert(&mh, &g, int_cmp);
+    minheap_insert(&mh, &h, int_cmp);
+
+    ck_assert_uint_eq(mh->len, 8);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 1);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 3);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 4);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 5);
+
+    ck_assert_uint_eq(mh->len, 4);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 7);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 8);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 69);
+
+    minheap_delete(&mh, &out, int_cmp);
+    ck_assert_int_eq(out, 420);
+
+    ck_assert_uint_eq(mh->len, 0);
+
+    minheap_free(mh, NULL);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -312,6 +360,7 @@ Suite* suite() {
     tcase_add_test(tc_core, bt_post_order_test);
     tcase_add_test(tc_core, bt_bfs_test);
     tcase_add_test(tc_core, bt_compare_test);
+    tcase_add_test(tc_core, minheap_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
