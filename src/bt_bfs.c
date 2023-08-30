@@ -7,7 +7,7 @@ bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn) {
     q = queue_new(sizeof(BinaryNode*));
 
     // we have to pass head by pointer because it
-    // has a flexible array membor and breaks
+    // has a flexible array member and breaks
     // on deque when dequing into a non ptr
     queue_enque(&q, &head);
 
