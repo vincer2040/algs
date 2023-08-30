@@ -234,6 +234,23 @@ START_TEST(bt_post_order_test) {
 }
 END_TEST
 
+START_TEST(bt_bfs_test) {
+    BinaryNode* head = tree();
+    int a = 45, b = 7, c = 69;
+
+    bool at = bt_bfs(head, &a, int_cmp);
+    ck_assert(at == true);
+
+    bool bt = bt_bfs(head, &b, int_cmp);
+    ck_assert(bt == true);
+
+    bool ct = bt_bfs(head, &c, int_cmp);
+    ck_assert(ct == false);
+
+    binary_tree_free(head, NULL);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -247,6 +264,7 @@ Suite* suite() {
     tcase_add_test(tc_core, bt_pre_order_test);
     tcase_add_test(tc_core, bt_in_order_test);
     tcase_add_test(tc_core, bt_post_order_test);
+    tcase_add_test(tc_core, bt_bfs_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
