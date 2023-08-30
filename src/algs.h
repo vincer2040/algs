@@ -51,6 +51,13 @@ typedef struct {
     unsigned char data[];
 } vec;
 
+typedef struct {
+    size_t len;
+    size_t cap;
+    size_t data_size;
+    unsigned char data[];
+} MinHeap;
+
 ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
 
@@ -83,5 +90,10 @@ void binary_tree_free(BinaryNode* head, FreeFn* fn);
 bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn);
 
 bool bt_compare(BinaryNode* a, BinaryNode* b, CmpFn* fn);
+
+MinHeap* minheap_new(size_t data_size, size_t initial_cap);
+int minheap_insert(MinHeap** heap, void* value, CmpFn* cmp);
+int minheap_delete(MinHeap** heap, void* out, CmpFn* cmp);
+void minheap_free(MinHeap* heap, FreeFn* cb);
 
 #endif /*__ALGS_H__*/
