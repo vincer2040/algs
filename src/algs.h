@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
 #define swap(a1, b1, s)                                                        \
     {                                                                          \
@@ -78,5 +79,7 @@ vec* pre_order_search(BinaryNode* head, size_t data_size);
 vec* in_order_search(BinaryNode* head, size_t data_size);
 vec* post_order_search(BinaryNode* head, size_t data_size);
 void binary_tree_free(BinaryNode* head, FreeFn* fn);
+
+bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn);
 
 #endif /*__ALGS_H__*/
