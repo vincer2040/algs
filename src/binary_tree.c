@@ -12,6 +12,8 @@ BinaryNode* binary_node_new(void* data, size_t data_size) {
     }
     memset(bn, 0, data_size);
     memcpy(bn->data, data, data_size);
+    bn->right = NULL;
+    bn->left = NULL;
 
     return bn;
 }

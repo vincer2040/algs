@@ -1,9 +1,9 @@
 #ifndef __ALGS_H__
 #define __ALGS_H__
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <sys/types.h>
-#include <stdbool.h>
 
 #define swap(a1, b1, s)                                                        \
     {                                                                          \
@@ -81,5 +81,7 @@ vec* post_order_search(BinaryNode* head, size_t data_size);
 void binary_tree_free(BinaryNode* head, FreeFn* fn);
 
 bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn);
+
+bool bt_compare(BinaryNode* a, BinaryNode* b, CmpFn* fn);
 
 #endif /*__ALGS_H__*/
