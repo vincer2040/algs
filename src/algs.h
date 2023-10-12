@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 #define swap(a1, b1, s)                                                        \
@@ -16,6 +17,8 @@
             ucb[k] = tmp;                                                      \
         }                                                                      \
     }
+
+#define HT_SEED_SIZE 16
 
 typedef int CmpFn(void* a, void* b);
 typedef void FreeFn(void* ptr);
@@ -58,6 +61,25 @@ typedef struct {
     unsigned char data[];
 } MinHeap;
 
+typedef struct {
+    size_t key_len;
+    unsigned char data[];
+} HtEntry;
+
+typedef struct {
+    size_t len;
+    size_t cap;
+    HtEntry** entries;
+} HtBucket;
+
+typedef struct {
+    size_t len;
+    size_t cap;
+    size_t data_size;
+    unsigned char seed[HT_SEED_SIZE];
+    HtBucket* buckets;
+} Ht;
+
 ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
 
@@ -80,6 +102,8 @@ BinaryNode* binary_node_new(void* data, size_t data_size);
 
 vec* vec_new(size_t data_size, size_t initial_cap);
 int vec_push(vec** vec, void* data);
+ssize_t vec_find(vec* vec, void* cmp_data, CmpFn* cmp_fn);
+int vec_set_at(vec* vec, size_t idx, void* data, FreeFn* free_fn);
 void vec_free(vec* vec, FreeFn* fn);
 
 vec* pre_order_search(BinaryNode* head, size_t data_size);
@@ -95,5 +119,13 @@ MinHeap* minheap_new(size_t data_size, size_t initial_cap);
 int minheap_insert(MinHeap** heap, void* value, CmpFn* cmp);
 int minheap_delete(MinHeap** heap, void* out, CmpFn* cmp);
 void minheap_free(MinHeap* heap, FreeFn* cb);
+
+void get_random_bytes(uint8_t* p, size_t len);
+
+Ht* ht_new(size_t data_size);
+int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value, FreeFn* free_fn);
+void* ht_get(Ht* ht, unsigned char* key, size_t key_len);
+int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn);
+void ht_free(Ht* ht, FreeFn* free_fn);
 
 #endif /*__ALGS_H__*/

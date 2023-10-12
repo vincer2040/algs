@@ -70,6 +70,11 @@ BinaryNode* tree2(void) {
     return head;
 }
 
+void ht_free_fn(void* ptr) {
+    char* s = *((char**)ptr);
+    free(s);
+}
+
 START_TEST(binary_search_test) {
     int foo[] = {1, 3, 4, 69, 71, 81, 90, 99, 420, 1337, 69420};
     size_t foo_len = sizeof foo / sizeof foo[0];
@@ -345,6 +350,57 @@ START_TEST(minheap_test) {
 }
 END_TEST
 
+START_TEST(ht_test) {
+    Ht* ht = ht_new(sizeof(int));
+    ck_assert_ptr_nonnull(ht);
+    int a0 = 1;
+    int* a0_get;
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, NULL), 0);
+    a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    ck_assert_ptr_nonnull(a0_get);
+    ck_assert_int_eq(*a0_get, 1);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a0", 2, NULL), 0);
+    a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    ck_assert_ptr_null(a0_get);
+    ht_free(ht, NULL);
+}
+END_TEST
+
+START_TEST(ht_ptr_data_test) {
+    Ht* ht = ht_new(sizeof(char*));
+    char* a0 = calloc(6, sizeof *a0);
+    char* a1 = calloc(7, sizeof *a0);
+    char* a2 = calloc(7, sizeof *a0);
+    char* a3 = calloc(7, sizeof *a0);
+    char* a4 = calloc(7, sizeof *a0);
+    char* a5 = calloc(7, sizeof *a0);
+    char** a0_get;
+    memcpy(a0, "vince", 5);
+    memcpy(a1, "vince1", 6);
+    memcpy(a2, "vince2", 6);
+    memcpy(a3, "vince3", 6);
+    memcpy(a4, "vince4", 6);
+    memcpy(a5, "vince5", 6);
+
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, ht_free_fn), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a1", 2, &a1, ht_free_fn), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a2", 2, &a2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a3", 2, &a3, ht_free_fn), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a4", 2, &a4, ht_free_fn), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a5", 2, &a5, ht_free_fn), 0);
+    a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    ck_assert_str_eq(*a0_get, "vince");
+
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a0", 2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a1", 2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a2", 2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a3", 2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a4", 2, ht_free_fn), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a5", 2, ht_free_fn), 0);
+    ht_free(ht, ht_free_fn);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -361,6 +417,8 @@ Suite* suite() {
     tcase_add_test(tc_core, bt_bfs_test);
     tcase_add_test(tc_core, bt_compare_test);
     tcase_add_test(tc_core, minheap_test);
+    tcase_add_test(tc_core, ht_test);
+    tcase_add_test(tc_core, ht_ptr_data_test);
     suite_add_tcase(s, tc_core);
     return s;
 }

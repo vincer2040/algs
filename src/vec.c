@@ -44,6 +44,36 @@ int vec_push(vec** vec, void* data) {
     return 0;
 }
 
+ssize_t vec_find(vec* vec, void* cmp_data, CmpFn* cmp_fn) {
+    size_t i, len;
+    len = vec->len;
+    if (len == 0) {
+        return -1;
+    }
+    for (i = 0; i < len; ++i) {
+        void* at = vec->data + (i * vec->data_size);
+        int cmp = cmp_fn(cmp_data, at);
+        if (cmp == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int vec_set_at(vec* vec, size_t idx, void* data, FreeFn* free_fn) {
+    void* ptr;
+    size_t data_size = vec->data_size;
+    if (vec->len >= idx) {
+        return -1;
+    }
+    ptr = vec->data + (idx * data_size);
+    if (free_fn) {
+        free_fn(ptr);
+    }
+    memcpy(vec->data + (idx * data_size), data, data_size);
+    return 0;
+}
+
 void vec_free(vec* vec, FreeFn* fn) {
     if (fn) {
         size_t i, len, data_size;
