@@ -73,7 +73,8 @@ static int ht_realloc_bucket(HtBucket* bucket) {
     return 0;
 }
 
-static inline void bucket_remove(HtBucket* bucket, size_t idx, FreeFn* free_fn) {
+static inline void bucket_remove(HtBucket* bucket, size_t idx,
+                                 FreeFn* free_fn) {
     size_t bucket_len = bucket->len;
     HtEntry* entry = bucket->entries[idx];
     if (free_fn) {
@@ -122,14 +123,16 @@ static int ht_resize(Ht* ht) {
                 for (k = 0; k < j; ++k) {
                     HtEntry* cur = bucket->entries[k];
                     if (!cur) {
-                        memmove(&(bucket->entries[k]), &(bucket->entries[j]), sizeof(HtEntry*));
+                        memmove(&(bucket->entries[k]), &(bucket->entries[j]),
+                                sizeof(HtEntry*));
                         memset(&(bucket->entries[j]), 0, sizeof(HtEntry*));
                         goto next;
                     }
                 }
             } else {
                 HtBucket* new_bucket = &(ht->buckets[hash]);
-                size_t new_bucket_cap = new_bucket->cap, new_bucket_len = new_bucket->len;
+                size_t new_bucket_cap = new_bucket->cap,
+                       new_bucket_len = new_bucket->len;
                 if (new_bucket_cap == 0) {
                     if (ht_init_bucket(bucket) == -1) {
                         return -1;
@@ -147,13 +150,14 @@ static int ht_resize(Ht* ht) {
                         return -1;
                     }
                 }
-                memmove(&(new_bucket->entries[new_bucket_len]), &(bucket->entries[j]), sizeof(HtEntry*));
+                memmove(&(new_bucket->entries[new_bucket_len]),
+                        &(bucket->entries[j]), sizeof(HtEntry*));
                 memset(&(bucket->entries[j]), 0, sizeof(HtEntry*));
                 new_bucket->len++;
                 bucket->len--;
             }
 
-next:
+        next:
             continue;
         }
     }
