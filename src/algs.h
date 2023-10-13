@@ -123,7 +123,8 @@ void minheap_free(MinHeap* heap, FreeFn* cb);
 void get_random_bytes(uint8_t* p, size_t len);
 
 Ht* ht_new(size_t data_size);
-int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value, FreeFn* free_fn);
+int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
+              FreeFn* free_fn);
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len);
 int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn);
 void ht_free(Ht* ht, FreeFn* free_fn);
