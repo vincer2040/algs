@@ -130,6 +130,11 @@ int ht_resize(Ht* ht) {
             } else {
                 HtBucket* new_bucket = &(ht->buckets[hash]);
                 size_t new_bucket_cap = new_bucket->cap, new_bucket_len = new_bucket->len;
+                if (new_bucket_cap == 0) {
+                    if (ht_init_bucket(bucket) == -1) {
+                        return -1;
+                    }
+                }
                 if (new_bucket_len == 0) {
                     new_bucket->entries[0] = entry;
                     memset(&(bucket->entries[j]), 0, sizeof(HtEntry*));
