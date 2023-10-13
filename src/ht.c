@@ -95,7 +95,7 @@ static inline void bucket_remove(HtBucket* bucket, size_t idx, FreeFn* free_fn) 
     memset(&(bucket->entries[bucket_len - 1]), 0, sizeof(HtEntry*));
 }
 
-int ht_resize(Ht* ht) {
+static int ht_resize(Ht* ht) {
     size_t i, cap = ht->cap;
     size_t new_cap = cap << 1;
     void* tmp = realloc(ht->buckets, new_cap * sizeof(HtBucket));
