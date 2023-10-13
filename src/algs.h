@@ -19,6 +19,8 @@
     }
 
 #define HT_SEED_SIZE 16
+#define HT_RESIZABLE 1
+#define HT_NOT_RESIZABLE 0
 
 typedef int CmpFn(void* a, void* b);
 typedef void FreeFn(void* ptr);
@@ -33,6 +35,12 @@ typedef struct BinaryNode {
     struct BinaryNode* right;
     unsigned char data[];
 } BinaryNode;
+
+typedef struct ListNode {
+    struct ListNode* next;
+    struct ListNode* prev;
+    unsigned char data[];
+} ListNode;
 
 typedef struct {
     size_t len;
@@ -76,6 +84,7 @@ typedef struct {
     size_t len;
     size_t cap;
     size_t data_size;
+    int resizable;
     unsigned char seed[HT_SEED_SIZE];
     HtBucket* buckets;
 } Ht;
@@ -122,7 +131,7 @@ void minheap_free(MinHeap* heap, FreeFn* cb);
 
 void get_random_bytes(uint8_t* p, size_t len);
 
-Ht* ht_new(size_t data_size);
+Ht* ht_new(size_t data_size, int resizable);
 int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
               FreeFn* free_fn);
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len);

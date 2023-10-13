@@ -4,15 +4,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define HT_INITIAL_CAP 32
-#define BUCKET_INITAL_CAP 5
+#define HT_INITIAL_CAP 1
+#define BUCKET_INITAL_CAP 1
 
 #define ht_padding(size)                                                       \
     ((sizeof(void*) - ((size + 8) % sizeof(void*))) & (sizeof(void*) - 1))
 
 static inline void entry_free(HtEntry* entry, FreeFn* free_fn);
 
-Ht* ht_new(size_t data_size) {
+Ht* ht_new(size_t data_size, int resizable) {
     Ht* ht;
     ht = calloc(1, sizeof *ht);
     if (ht == NULL) {
@@ -167,10 +167,21 @@ static int ht_resize(Ht* ht) {
 
 int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
               FreeFn* free_fn) {
-    uint64_t hash = ht_hash(ht, key, key_len);
-    HtBucket* bucket = &(ht->buckets[hash]);
-    size_t i, len = bucket->len, cap = bucket->cap;
+    uint64_t hash;
+    HtBucket* bucket;
     HtEntry* entry;
+    size_t i, len, cap;
+
+    if ((ht->len == ht->cap) && ht->resizable) {
+        if (ht_resize(ht) == -1) {
+            return -1;
+        }
+    }
+
+    hash = ht_hash(ht, key, key_len);
+    bucket = &(ht->buckets[hash]);
+    len = bucket->len;
+    cap = bucket->cap;
 
     if (cap == 0) {
         if (ht_init_bucket(bucket) == -1) {

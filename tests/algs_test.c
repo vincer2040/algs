@@ -351,7 +351,7 @@ START_TEST(minheap_test) {
 END_TEST
 
 START_TEST(ht_test) {
-    Ht* ht = ht_new(sizeof(int));
+    Ht* ht = ht_new(sizeof(int), HT_RESIZABLE);
     ck_assert_ptr_nonnull(ht);
     int a0 = 0, a1 = 1, a2= 2, a3 = 3, a4 = 4, a5 = 5;
     int* a0_get, *a1_get, *a2_get, *a3_get, *a4_get, *a5_get;
@@ -434,7 +434,7 @@ START_TEST(ht_test) {
 END_TEST
 
 START_TEST(ht_ptr_data_test) {
-    Ht* ht = ht_new(sizeof(char*));
+    Ht* ht = ht_new(sizeof(char*), HT_RESIZABLE);
     char* a0 = calloc(6, sizeof *a0);
     char* a1 = calloc(7, sizeof *a0);
     char* a2 = calloc(7, sizeof *a0);
