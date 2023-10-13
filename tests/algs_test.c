@@ -353,15 +353,82 @@ END_TEST
 START_TEST(ht_test) {
     Ht* ht = ht_new(sizeof(int));
     ck_assert_ptr_nonnull(ht);
-    int a0 = 1;
-    int* a0_get;
+    int a0 = 0, a1 = 1, a2= 2, a3 = 3, a4 = 4, a5 = 5;
+    int* a0_get, *a1_get, *a2_get, *a3_get, *a4_get, *a5_get;
+
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a1", 2, &a1, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a2", 2, &a2, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a3", 2, &a3, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a4", 2, &a4, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a5", 2, &a5, NULL), 0);
+
     a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    a1_get = ht_get(ht, (unsigned char*)"a1", 2);
+    a2_get = ht_get(ht, (unsigned char*)"a2", 2);
+    a3_get = ht_get(ht, (unsigned char*)"a3", 2);
+    a4_get = ht_get(ht, (unsigned char*)"a4", 2);
+    a5_get = ht_get(ht, (unsigned char*)"a5", 2);
     ck_assert_ptr_nonnull(a0_get);
-    ck_assert_int_eq(*a0_get, 1);
+    ck_assert_ptr_nonnull(a1_get);
+    ck_assert_ptr_nonnull(a2_get);
+    ck_assert_ptr_nonnull(a3_get);
+    ck_assert_ptr_nonnull(a4_get);
+    ck_assert_ptr_nonnull(a5_get);
+    ck_assert_int_eq(*a0_get, 0);
+    ck_assert_int_eq(*a1_get, 1);
+    ck_assert_int_eq(*a2_get, 2);
+    ck_assert_int_eq(*a3_get, 3);
+    ck_assert_int_eq(*a4_get, 4);
+    ck_assert_int_eq(*a5_get, 5);
+
     ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a0", 2, NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a1", 2, NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a2", 2, NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a3", 2, NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a4", 2, NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)"a5", 2, NULL), 0);
+
     a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    a1_get = ht_get(ht, (unsigned char*)"a1", 2);
+    a2_get = ht_get(ht, (unsigned char*)"a2", 2);
+    a3_get = ht_get(ht, (unsigned char*)"a3", 2);
+    a4_get = ht_get(ht, (unsigned char*)"a4", 2);
+    a5_get = ht_get(ht, (unsigned char*)"a5", 2);
     ck_assert_ptr_null(a0_get);
+    ck_assert_ptr_null(a1_get);
+    ck_assert_ptr_null(a2_get);
+    ck_assert_ptr_null(a3_get);
+    ck_assert_ptr_null(a4_get);
+    ck_assert_ptr_null(a5_get);
+
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a1", 2, &a1, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a2", 2, &a2, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a3", 2, &a3, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a4", 2, &a4, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a5", 2, &a5, NULL), 0);
+
+    a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    a1_get = ht_get(ht, (unsigned char*)"a1", 2);
+    a2_get = ht_get(ht, (unsigned char*)"a2", 2);
+    a3_get = ht_get(ht, (unsigned char*)"a3", 2);
+    a4_get = ht_get(ht, (unsigned char*)"a4", 2);
+    a5_get = ht_get(ht, (unsigned char*)"a5", 2);
+    ck_assert_ptr_nonnull(a0_get);
+    ck_assert_ptr_nonnull(a1_get);
+    ck_assert_ptr_nonnull(a2_get);
+    ck_assert_ptr_nonnull(a3_get);
+    ck_assert_ptr_nonnull(a4_get);
+    ck_assert_ptr_nonnull(a5_get);
+    ck_assert_int_eq(*a0_get, 0);
+    ck_assert_int_eq(*a1_get, 1);
+    ck_assert_int_eq(*a2_get, 2);
+    ck_assert_int_eq(*a3_get, 3);
+    ck_assert_int_eq(*a4_get, 4);
+    ck_assert_int_eq(*a5_get, 5);
+
+
     ht_free(ht, NULL);
 }
 END_TEST

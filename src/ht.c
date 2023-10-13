@@ -73,7 +73,30 @@ static int ht_realloc_bucket(HtBucket* bucket) {
     return 0;
 }
 
-int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value, FreeFn* free_fn) {
+static inline void bucket_remove(HtBucket* bucket, size_t idx, FreeFn* free_fn) {
+    size_t bucket_len = bucket->len;
+    HtEntry* entry = bucket->entries[idx];
+    if (free_fn) {
+        size_t entry_key_len = entry->key_len;
+        size_t offset = entry_key_len + ht_padding(entry_key_len);
+        void* ptr = entry->data + offset;
+        free_fn(ptr);
+    }
+    free(entry);
+    bucket->len--;
+    if (bucket->len == 0) {
+        memset(bucket->entries, 0, sizeof(HtEntry*));
+        return;
+    }
+
+    memmove(&(bucket->entries[idx]), &(bucket->entries[idx + 1]),
+            (bucket_len - idx - 1) * sizeof(HtEntry*));
+
+    memset(&(bucket->entries[bucket_len - 1]), 0, sizeof(HtEntry*));
+}
+
+int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
+              FreeFn* free_fn) {
     uint64_t hash = ht_hash(ht, key, key_len);
     HtBucket* bucket = &(ht->buckets[hash]);
     size_t i, len = bucket->len, cap = bucket->cap;
@@ -169,13 +192,7 @@ int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn) {
         size_t cur_key_len = cur->key_len;
         unsigned char* cur_key = cur->data;
         if ((key_len == cur_key_len) && (memcmp(key, cur_key, key_len) == 0)) {
-            size_t j = i + 1;
-            entry_free(cur, free_fn);
-            for (; j < len; ++j, ++i) {
-                bucket->entries[i] = bucket->entries[j];
-            }
-            memset(&(bucket->entries[len]), 0, (bucket->cap - len) * sizeof(HtEntry*));
-            bucket->len--;
+            bucket_remove(bucket, i, free_fn);
             ht->len--;
             return 0;
         }
