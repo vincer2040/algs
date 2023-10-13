@@ -1,6 +1,7 @@
 #include "algs.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn) {
     Queue q;
@@ -17,6 +18,7 @@ bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn) {
         queue_deque(&q, &cur);
         cmp = fn(cur->data, needle);
         if (cmp == 0) {
+            queue_free(&q, NULL);
             return true;
         }
 
@@ -28,5 +30,6 @@ bool bt_bfs(BinaryNode* head, void* needle, CmpFn* fn) {
         }
     }
 
+    queue_free(&q, NULL);
     return false;
 }
