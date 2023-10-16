@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define HT_INITIAL_CAP 1
-#define BUCKET_INITAL_CAP 1
+#define HT_INITIAL_CAP 32
+#define BUCKET_INITAL_CAP 5
 
 #define ht_padding(size)                                                       \
     ((sizeof(void*) - ((size + 8) % sizeof(void*))) & (sizeof(void*) - 1))
@@ -25,7 +25,8 @@ Ht* ht_new(size_t data_size, int resizable, size_t initial_cap) {
         free(ht);
         return NULL;
     }
-    ht->cap = initial_cap ? initial_cap : HT_INITIAL_CAP;
+    ht->cap = initial_cap != 0 ? initial_cap : HT_INITIAL_CAP;
+    ht->resizable = resizable;
     get_random_bytes(ht->seed, sizeof ht->seed);
     return ht;
 }
@@ -315,13 +316,18 @@ static void ht_bucket_free(HtBucket* bucket, FreeFn* key_free_fn,  FreeFn* value
         HtEntry* entry = bucket->entries[i];
         entry_free(entry, key_free_fn, value_free_fn);
     }
-    free(bucket->entries);
+    if (bucket->entries) {
+        free(bucket->entries);
+    }
 }
 
 void ht_free(Ht* ht, FreeFn* key_free_fn, FreeFn* value_free_fn) {
     size_t i, len = ht->cap;
     for (i = 0; i < len; ++i) {
         HtBucket bucket = ht->buckets[i];
+        if (bucket.cap == 0) {
+            continue;
+        }
         ht_bucket_free(&bucket, key_free_fn, value_free_fn);
     }
     free(ht->buckets);
