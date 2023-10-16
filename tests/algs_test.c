@@ -351,7 +351,7 @@ START_TEST(minheap_test) {
 END_TEST
 
 START_TEST(ht_test) {
-    Ht* ht = ht_new(sizeof(int), HT_RESIZABLE);
+    Ht* ht = ht_new(sizeof(int), HT_RESIZABLE, 0);
     ck_assert_ptr_nonnull(ht);
     int a0 = 0, a1 = 1, a2= 2, a3 = 3, a4 = 4, a5 = 5;
     int* a0_get, *a1_get, *a2_get, *a3_get, *a4_get, *a5_get;
@@ -434,7 +434,7 @@ START_TEST(ht_test) {
 END_TEST
 
 START_TEST(ht_ptr_data_test) {
-    Ht* ht = ht_new(sizeof(char*), HT_RESIZABLE);
+    Ht* ht = ht_new(sizeof(char*), HT_RESIZABLE, 0);
     char* a0 = calloc(6, sizeof *a0);
     char* a1 = calloc(7, sizeof *a0);
     char* a2 = calloc(7, sizeof *a0);
@@ -468,6 +468,87 @@ START_TEST(ht_ptr_data_test) {
 }
 END_TEST
 
+START_TEST(ht_non_string_keys) {
+    Ht* ht = ht_new(sizeof(int), HT_RESIZABLE, 0);
+    ck_assert_ptr_nonnull(ht);
+    int a0 = 0, a1 = 1, a2= 2, a3 = 3, a4 = 4, a5 = 5;
+    int* a0_get, *a1_get, *a2_get, *a3_get, *a4_get, *a5_get;
+
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a0), sizeof(int), &a0, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a1), sizeof(int), &a1, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a2), sizeof(int), &a2, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a3), sizeof(int), &a3, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a4), sizeof(int), &a4, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a5), sizeof(int), &a5, NULL), 0);
+
+    a0_get = ht_get(ht, (unsigned char*)(&a0), sizeof(int));
+    a1_get = ht_get(ht, (unsigned char*)(&a1), sizeof(int));
+    a2_get = ht_get(ht, (unsigned char*)(&a2), sizeof(int));
+    a3_get = ht_get(ht, (unsigned char*)(&a3), sizeof(int));
+    a4_get = ht_get(ht, (unsigned char*)(&a4), sizeof(int));
+    a5_get = ht_get(ht, (unsigned char*)(&a5), sizeof(int));
+    ck_assert_ptr_nonnull(a0_get);
+    ck_assert_ptr_nonnull(a1_get);
+    ck_assert_ptr_nonnull(a2_get);
+    ck_assert_ptr_nonnull(a3_get);
+    ck_assert_ptr_nonnull(a4_get);
+    ck_assert_ptr_nonnull(a5_get);
+    ck_assert_int_eq(*a0_get, 0);
+    ck_assert_int_eq(*a1_get, 1);
+    ck_assert_int_eq(*a2_get, 2);
+    ck_assert_int_eq(*a3_get, 3);
+    ck_assert_int_eq(*a4_get, 4);
+    ck_assert_int_eq(*a5_get, 5);
+
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a0), sizeof(int), NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a1), sizeof(int), NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a2), sizeof(int), NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a3), sizeof(int), NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a4), sizeof(int), NULL), 0);
+    ck_assert_int_eq(ht_delete(ht, (unsigned char*)(&a5), sizeof(int), NULL), 0);
+
+    a0_get = ht_get(ht, (unsigned char*)(&a0), sizeof(int));
+    a1_get = ht_get(ht, (unsigned char*)(&a1), sizeof(int));
+    a2_get = ht_get(ht, (unsigned char*)(&a2), sizeof(int));
+    a3_get = ht_get(ht, (unsigned char*)(&a3), sizeof(int));
+    a4_get = ht_get(ht, (unsigned char*)(&a4), sizeof(int));
+    a5_get = ht_get(ht, (unsigned char*)(&a5), sizeof(int));
+    ck_assert_ptr_null(a0_get);
+    ck_assert_ptr_null(a1_get);
+    ck_assert_ptr_null(a2_get);
+    ck_assert_ptr_null(a3_get);
+    ck_assert_ptr_null(a4_get);
+    ck_assert_ptr_null(a5_get);
+
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a0), sizeof(int), &a0, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a1), sizeof(int), &a1, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a2), sizeof(int), &a2, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a3), sizeof(int), &a3, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a4), sizeof(int), &a4, NULL), 0);
+    ck_assert_int_eq(ht_insert(ht, (unsigned char*)(&a5), sizeof(int), &a5, NULL), 0);
+
+    a0_get = ht_get(ht, (unsigned char*)(&a0), sizeof(int));
+    a1_get = ht_get(ht, (unsigned char*)(&a1), sizeof(int));
+    a2_get = ht_get(ht, (unsigned char*)(&a2), sizeof(int));
+    a3_get = ht_get(ht, (unsigned char*)(&a3), sizeof(int));
+    a4_get = ht_get(ht, (unsigned char*)(&a4), sizeof(int));
+    a5_get = ht_get(ht, (unsigned char*)(&a5), sizeof(int));
+    ck_assert_ptr_nonnull(a0_get);
+    ck_assert_ptr_nonnull(a1_get);
+    ck_assert_ptr_nonnull(a2_get);
+    ck_assert_ptr_nonnull(a3_get);
+    ck_assert_ptr_nonnull(a4_get);
+    ck_assert_ptr_nonnull(a5_get);
+    ck_assert_int_eq(*a0_get, 0);
+    ck_assert_int_eq(*a1_get, 1);
+    ck_assert_int_eq(*a2_get, 2);
+    ck_assert_int_eq(*a3_get, 3);
+    ck_assert_int_eq(*a4_get, 4);
+    ck_assert_int_eq(*a5_get, 5);
+    ht_free(ht, NULL);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -486,6 +567,7 @@ Suite* suite() {
     tcase_add_test(tc_core, minheap_test);
     tcase_add_test(tc_core, ht_test);
     tcase_add_test(tc_core, ht_ptr_data_test);
+    tcase_add_test(tc_core, ht_non_string_keys);
     suite_add_tcase(s, tc_core);
     return s;
 }
