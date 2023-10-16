@@ -93,7 +93,10 @@ typedef struct {
     size_t len;
     size_t cap;
     size_t data_size;
-    Ht* lookups[2];
+    ListNode* head;
+    ListNode* tail;
+    Ht* lookup;
+    Ht* reverse_lookup;
 } LRU;
 
 ssize_t binary_search(void* haystack, void* needle, size_t len,
@@ -146,5 +149,10 @@ int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, F
 size_t ht_len(Ht* ht);
 size_t ht_capacity(Ht* ht);
 void ht_free(Ht* ht, FreeFn* key_free_fn, FreeFn* value_free_fn);
+
+LRU* lru_new(size_t capacity, size_t data_size);
+int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data, FreeFn* free_fn);
+void* lru_get(LRU* lru, unsigned char* key, size_t key_len);
+void lru_free(LRU* lru, FreeFn* free_fn);
 
 #endif /*__ALGS_H__*/

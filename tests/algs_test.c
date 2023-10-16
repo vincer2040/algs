@@ -356,6 +356,9 @@ START_TEST(ht_test) {
     int a0 = 0, a1 = 1, a2= 2, a3 = 3, a4 = 4, a5 = 5;
     int* a0_get, *a1_get, *a2_get, *a3_get, *a4_get, *a5_get;
 
+    a0_get = ht_get(ht, (unsigned char*)"a0", 2);
+    ck_assert_ptr_null(a0_get);
+
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, NULL), 0);
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a1", 2, &a1, NULL), 0);
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a2", 2, &a2, NULL), 0);
@@ -549,6 +552,69 @@ START_TEST(ht_non_string_keys) {
 }
 END_TEST
 
+START_TEST(ht_free_empty_ht) {
+    Ht* ht = ht_new(sizeof(int), HT_RESIZABLE, 10);
+    ck_assert_ptr_nonnull(ht);
+    ht_free(ht, NULL, NULL);
+}
+
+START_TEST(lru_test) {
+    int a0 = 69, a1 = 420, a2 = 1337, a3 = 69420;
+    int* get;
+    LRU* lru = lru_new(3, sizeof(int));
+    ck_assert_ptr_nonnull(lru);
+
+    get = lru_get(lru, (unsigned char*)"foo", 3);
+    ck_assert_ptr_null(get);
+
+    lru_update(lru, (unsigned char*)"foo", 3, &a0, NULL);
+
+    get = lru_get(lru, (unsigned char*)"foo", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a0);
+
+    lru_update(lru, (unsigned char*)"bar", 3, &a1, NULL);
+
+    get = lru_get(lru, (unsigned char*)"bar", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a1);
+
+    lru_update(lru, (unsigned char*)"baz", 3, &a2, NULL);
+
+    get = lru_get(lru, (unsigned char*)"baz", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a2);
+
+    lru_update(lru, (unsigned char*)"ball", 4, &a3, NULL);
+
+    get = lru_get(lru, (unsigned char*)"ball", 4);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a3);
+
+    get = lru_get(lru, (unsigned char*)"foo", 3);
+    ck_assert_ptr_null(get);
+
+    get = lru_get(lru, (unsigned char*)"bar", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a1);
+
+    lru_update(lru, (unsigned char*)"foo", 3, &a0, NULL);
+
+    get = lru_get(lru, (unsigned char*)"bar", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a1);
+
+    get = lru_get(lru, (unsigned char*)"foo", 3);
+    ck_assert_ptr_nonnull(get);
+    ck_assert_int_eq(*get, a0);
+
+    get = lru_get(lru, (unsigned char*)"baz", 3);
+    ck_assert_ptr_null(get);
+
+    lru_free(lru, NULL);
+}
+END_TEST
+
 Suite* suite() {
     Suite* s;
     TCase* tc_core;
@@ -568,6 +634,8 @@ Suite* suite() {
     tcase_add_test(tc_core, ht_test);
     tcase_add_test(tc_core, ht_ptr_data_test);
     tcase_add_test(tc_core, ht_non_string_keys);
+    tcase_add_test(tc_core, ht_free_empty_ht);
+    tcase_add_test(tc_core, lru_test);
     suite_add_tcase(s, tc_core);
     return s;
 }
