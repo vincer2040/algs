@@ -358,6 +358,7 @@ START_TEST(ht_test) {
 
     a0_get = ht_get(ht, (unsigned char*)"a0", 2);
     ck_assert_ptr_null(a0_get);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a0", 2), -1);
 
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a0", 2, &a0, NULL), 0);
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a1", 2, &a1, NULL), 0);
@@ -365,6 +366,14 @@ START_TEST(ht_test) {
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a3", 2, &a3, NULL), 0);
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a4", 2, &a4, NULL), 0);
     ck_assert_int_eq(ht_insert(ht, (unsigned char*)"a5", 2, &a5, NULL), 0);
+
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a0", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a1", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a2", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a3", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a4", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a5", 2), 0);
+    ck_assert_int_eq(ht_has(ht, (unsigned char*)"a6", 2), -1);
 
     a0_get = ht_get(ht, (unsigned char*)"a0", 2);
     a1_get = ht_get(ht, (unsigned char*)"a1", 2);
