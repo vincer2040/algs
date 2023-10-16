@@ -12,7 +12,7 @@
 
 static inline void entry_free(HtEntry* entry, FreeFn* free_fn);
 
-Ht* ht_new(size_t data_size, int resizable) {
+Ht* ht_new(size_t data_size, int resizable, size_t initial_cap) {
     Ht* ht;
     ht = calloc(1, sizeof *ht);
     if (ht == NULL) {
@@ -25,7 +25,7 @@ Ht* ht_new(size_t data_size, int resizable) {
         free(ht);
         return NULL;
     }
-    ht->cap = HT_INITIAL_CAP;
+    ht->cap = initial_cap ? initial_cap : HT_INITIAL_CAP;
     get_random_bytes(ht->seed, sizeof ht->seed);
     return ht;
 }
@@ -172,7 +172,7 @@ int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
     HtEntry* entry;
     size_t i, len, cap;
 
-    if ((ht->len == ht->cap) && ht->resizable) {
+    if ((ht->len >= ht->cap) && ht->resizable) {
         if (ht_resize(ht) == -1) {
             return -1;
         }
@@ -279,6 +279,14 @@ int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn) {
         }
     }
     return -1;
+}
+
+size_t ht_len(Ht* ht) {
+    return ht->len;
+}
+
+size_t ht_capacity(Ht* ht) {
+    return ht->cap;
 }
 
 static inline void entry_free(HtEntry* entry, FreeFn* free_fn) {
