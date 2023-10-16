@@ -89,6 +89,13 @@ typedef struct {
     HtBucket* buckets;
 } Ht;
 
+typedef struct {
+    size_t len;
+    size_t cap;
+    size_t data_size;
+    Ht* lookups[2];
+} LRU;
+
 ssize_t binary_search(void* haystack, void* needle, size_t len,
                       size_t data_size, CmpFn fn);
 
@@ -135,9 +142,9 @@ Ht* ht_new(size_t data_size, int resizable, size_t inital_cap);
 int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
               FreeFn* free_fn);
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len);
-int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn);
+int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, FreeFn* value_free_fn);
 size_t ht_len(Ht* ht);
 size_t ht_capacity(Ht* ht);
-void ht_free(Ht* ht, FreeFn* free_fn);
+void ht_free(Ht* ht, FreeFn* key_free_fn, FreeFn* value_free_fn);
 
 #endif /*__ALGS_H__*/

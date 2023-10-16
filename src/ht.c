@@ -10,7 +10,7 @@
 #define ht_padding(size)                                                       \
     ((sizeof(void*) - ((size + 8) % sizeof(void*))) & (sizeof(void*) - 1))
 
-static inline void entry_free(HtEntry* entry, FreeFn* free_fn);
+static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn, FreeFn* value_free_fn);
 
 Ht* ht_new(size_t data_size, int resizable, size_t initial_cap) {
     Ht* ht;
@@ -74,14 +74,17 @@ static int ht_realloc_bucket(HtBucket* bucket) {
 }
 
 static inline void bucket_remove(HtBucket* bucket, size_t idx,
-                                 FreeFn* free_fn) {
+                                 FreeFn* key_free_fn, FreeFn* value_free_fn) {
     size_t bucket_len = bucket->len;
     HtEntry* entry = bucket->entries[idx];
-    if (free_fn) {
+    if (key_free_fn) {
+        key_free_fn(entry->data);
+    }
+    if (value_free_fn) {
         size_t entry_key_len = entry->key_len;
         size_t offset = entry_key_len + ht_padding(entry_key_len);
         void* ptr = entry->data + offset;
-        free_fn(ptr);
+        value_free_fn(ptr);
     }
     free(entry);
     bucket->len--;
@@ -261,7 +264,7 @@ void* ht_get(Ht* ht, unsigned char* key, size_t key_len) {
     return NULL;
 }
 
-int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn) {
+int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, FreeFn* value_free_fn) {
     uint64_t hash = ht_hash(ht, key, key_len);
     HtBucket* bucket = &(ht->buckets[hash]);
     size_t i, len = bucket->len;
@@ -273,7 +276,7 @@ int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* free_fn) {
         size_t cur_key_len = cur->key_len;
         unsigned char* cur_key = cur->data;
         if ((key_len == cur_key_len) && (memcmp(key, cur_key, key_len) == 0)) {
-            bucket_remove(bucket, i, free_fn);
+            bucket_remove(bucket, i, key_free_fn, value_free_fn);
             ht->len--;
             return 0;
         }
@@ -289,34 +292,37 @@ size_t ht_capacity(Ht* ht) {
     return ht->cap;
 }
 
-static inline void entry_free(HtEntry* entry, FreeFn* free_fn) {
-    if (free_fn) {
+static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn, FreeFn* value_free_fn) {
+    if (key_free_fn) {
+        key_free_fn(entry->data);
+    }
+    if (value_free_fn) {
         size_t e_key_len = entry->key_len;
         size_t padding = ht_padding(e_key_len);
         size_t offset = e_key_len + padding;
         void* ptr = entry->data + offset;
-        free_fn(ptr);
+        value_free_fn(ptr);
     }
     free(entry);
 }
 
-static void ht_bucket_free(HtBucket* bucket, FreeFn* free_fn) {
+static void ht_bucket_free(HtBucket* bucket, FreeFn* key_free_fn,  FreeFn* value_free_fn) {
     size_t i, len = bucket->len, cap = bucket->cap;
     if (cap == 0) {
         return;
     }
     for (i = 0; i < len; ++i) {
         HtEntry* entry = bucket->entries[i];
-        entry_free(entry, free_fn);
+        entry_free(entry, key_free_fn, value_free_fn);
     }
     free(bucket->entries);
 }
 
-void ht_free(Ht* ht, FreeFn* free_fn) {
+void ht_free(Ht* ht, FreeFn* key_free_fn, FreeFn* value_free_fn) {
     size_t i, len = ht->cap;
     for (i = 0; i < len; ++i) {
         HtBucket bucket = ht->buckets[i];
-        ht_bucket_free(&bucket, free_fn);
+        ht_bucket_free(&bucket, key_free_fn, value_free_fn);
     }
     free(ht->buckets);
     free(ht);
