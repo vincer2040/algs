@@ -145,13 +145,15 @@ Ht* ht_new(size_t data_size, int resizable, size_t inital_cap);
 int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
               FreeFn* free_fn);
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len);
-int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, FreeFn* value_free_fn);
+int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn,
+              FreeFn* value_free_fn);
 size_t ht_len(Ht* ht);
 size_t ht_capacity(Ht* ht);
 void ht_free(Ht* ht, FreeFn* key_free_fn, FreeFn* value_free_fn);
 
 LRU* lru_new(size_t capacity, size_t data_size);
-int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data, FreeFn* free_fn);
+int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data,
+               FreeFn* free_fn);
 void* lru_get(LRU* lru, unsigned char* key, size_t key_len);
 void lru_free(LRU* lru, FreeFn* free_fn);
 

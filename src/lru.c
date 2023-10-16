@@ -10,11 +10,12 @@ static void lru_reverse_lookup_free_fn(void* ptr);
 static ListNode* list_node_new(void* data, size_t data_size);
 static void lru_detach(LRU* lru, ListNode* node);
 static void lru_prepend(LRU* lru, ListNode* node);
-static void lru_trim_cache(LRU* lru);
+static void lru_trim_cache(LRU* lru, FreeFn* free_fn);
+static void list_node_free(ListNode* node, FreeFn* free_fn);
+static void lru_list_free(LRU* lru, FreeFn* free_fn);
 
 LRU* lru_new(size_t capacity, size_t data_size) {
     LRU* lru;
-    // size_t node_size;
     lru = calloc(1, sizeof *lru);
     if (lru == NULL) {
         return NULL;
@@ -25,7 +26,6 @@ LRU* lru_new(size_t capacity, size_t data_size) {
     lru->data_size = data_size;
     lru->head = lru->tail = NULL;
 
-    // node_size = lru_node_size(data_size);
     lru->lookup = ht_new(sizeof(ListNode*), HT_NOT_RESIZABLE, capacity);
     if (lru->lookup == NULL) {
         return NULL;
@@ -39,11 +39,12 @@ LRU* lru_new(size_t capacity, size_t data_size) {
     return lru;
 }
 
-int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data, FreeFn* free_fn) {
+int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data,
+               FreeFn* free_fn) {
     ListNode** node = ht_get(lru->lookup, key, key_len);
     if (node == NULL) {
         ListNode* new_node = list_node_new(data, lru->data_size);
-        vstr vstr_key = vstr_new_len(key_len);
+        vstr vstr_key = vstr_new_len(key_len + 1);
         int insert_res;
         vstr_key = vstr_push_string_len(vstr_key, (char*)key, key_len);
         if (new_node == NULL) {
@@ -51,12 +52,13 @@ int lru_update(LRU* lru, unsigned char* key, size_t key_len, void* data, FreeFn*
         }
         lru->len++;
         lru_prepend(lru, new_node);
-        lru_trim_cache(lru);
+        lru_trim_cache(lru, free_fn);
         insert_res = ht_insert(lru->lookup, key, key_len, &new_node, NULL);
         if (insert_res != 0) {
             return insert_res;
         }
-        insert_res = ht_insert(lru->reverse_lookup, (unsigned char*)(&new_node), sizeof(ListNode*), &vstr_key, NULL);
+        insert_res = ht_insert(lru->reverse_lookup, (unsigned char*)(&new_node),
+                               sizeof(ListNode*), &vstr_key, NULL);
         return insert_res;
     } else {
         lru_detach(lru, *node);
@@ -81,9 +83,10 @@ void* lru_get(LRU* lru, unsigned char* key, size_t key_len) {
 }
 
 void lru_free(LRU* lru, FreeFn* free_fn) {
-    ((void)free_fn);
     ht_free(lru->lookup, NULL, NULL);
     ht_free(lru->reverse_lookup, NULL, lru_reverse_lookup_free_fn);
+    lru_list_free(lru, free_fn);
+    free(lru);
 }
 
 static void lru_detach(LRU* lru, ListNode* node) {
@@ -111,7 +114,7 @@ static void lru_prepend(LRU* lru, ListNode* node) {
     lru->head = node;
 }
 
-static void lru_trim_cache(LRU* lru) {
+static void lru_trim_cache(LRU* lru, FreeFn* free_fn) {
     ListNode* tail;
     vstr* key_ptr;
     size_t key_len;
@@ -122,11 +125,14 @@ static void lru_trim_cache(LRU* lru) {
     tail = lru->tail;
     lru_detach(lru, tail);
 
-    key_ptr = ht_get(lru->reverse_lookup, (unsigned char*)(&tail), sizeof(ListNode*));
+    key_ptr =
+        ht_get(lru->reverse_lookup, (unsigned char*)(&tail), sizeof(ListNode*));
     assert(key_ptr != NULL);
     key_len = vstr_len(*key_ptr);
     ht_delete(lru->lookup, (unsigned char*)(*key_ptr), key_len, NULL, NULL);
-    ht_delete(lru->reverse_lookup, (unsigned char*)(&tail), sizeof(ListNode*), NULL, NULL);
+    ht_delete(lru->reverse_lookup, (unsigned char*)(&tail), sizeof(ListNode*),
+              NULL, lru_reverse_lookup_free_fn);
+    list_node_free(tail, free_fn);
     lru->len--;
 }
 
@@ -146,4 +152,21 @@ static ListNode* list_node_new(void* data, size_t data_size) {
     memcpy(node->data, data, data_size);
     node->prev = node->next = NULL;
     return node;
+}
+
+static void list_node_free(ListNode* node, FreeFn* free_fn) {
+    if (free_fn) {
+        free_fn(node->data);
+    }
+
+    free(node);
+}
+
+static void lru_list_free(LRU* lru, FreeFn* free_fn) {
+    ListNode* cur = lru->head;
+    while (cur != NULL) {
+        ListNode* n = cur->next;
+        list_node_free(cur, free_fn);
+        cur = n;
+    }
 }
