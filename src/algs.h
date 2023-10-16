@@ -70,6 +70,12 @@ typedef struct {
 } MinHeap;
 
 typedef struct {
+    uint64_t from;
+    uint64_t to;
+    uint64_t weight;
+} GraphEdge;
+
+typedef struct {
     size_t key_len;
     unsigned char data[];
 } HtEntry;
@@ -144,6 +150,7 @@ void get_random_bytes(uint8_t* p, size_t len);
 Ht* ht_new(size_t data_size, int resizable, size_t inital_cap);
 int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
               FreeFn* free_fn);
+int ht_has(Ht* ht, unsigned char* key, size_t key_len);
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len);
 int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn,
               FreeFn* value_free_fn);

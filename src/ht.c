@@ -246,6 +246,30 @@ int ht_insert(Ht* ht, unsigned char* key, size_t key_len, void* value,
     return 0;
 }
 
+int ht_has(Ht* ht, unsigned char* key, size_t key_len) {
+    uint64_t hash = ht_hash(ht, key, key_len);
+    HtBucket* bucket = &(ht->buckets[hash]);
+    size_t i, len = bucket->len;
+
+    if (bucket->cap == 0) {
+        return -1;
+    }
+    if (len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len; ++i) {
+        HtEntry* cur = bucket->entries[i];
+        size_t cur_key_len = cur->key_len;
+        unsigned char* cur_key = cur->data;
+        if ((key_len == cur_key_len) && (memcmp(key, cur_key, key_len) == 0)) {
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
 void* ht_get(Ht* ht, unsigned char* key, size_t key_len) {
     uint64_t hash = ht_hash(ht, key, key_len);
     HtBucket* bucket = &(ht->buckets[hash]);
