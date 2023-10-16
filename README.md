@@ -5,7 +5,7 @@ algorithms and data structures based on "The Last Algorithms Course You'll Need"
 
 you can find the full (free) course [here](https://frontendmasters.com/courses/algorithms/)
 
-All implementations are in C. 
+All implementations are in C99. 
 
 ## Purpose
 
