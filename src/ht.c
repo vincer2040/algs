@@ -10,7 +10,8 @@
 #define ht_padding(size)                                                       \
     ((sizeof(void*) - ((size + 8) % sizeof(void*))) & (sizeof(void*) - 1))
 
-static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn, FreeFn* value_free_fn);
+static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn,
+                              FreeFn* value_free_fn);
 
 Ht* ht_new(size_t data_size, int resizable, size_t initial_cap) {
     Ht* ht;
@@ -265,7 +266,8 @@ void* ht_get(Ht* ht, unsigned char* key, size_t key_len) {
     return NULL;
 }
 
-int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, FreeFn* value_free_fn) {
+int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn,
+              FreeFn* value_free_fn) {
     uint64_t hash = ht_hash(ht, key, key_len);
     HtBucket* bucket = &(ht->buckets[hash]);
     size_t i, len = bucket->len;
@@ -285,15 +287,12 @@ int ht_delete(Ht* ht, unsigned char* key, size_t key_len, FreeFn* key_free_fn, F
     return -1;
 }
 
-size_t ht_len(Ht* ht) {
-    return ht->len;
-}
+size_t ht_len(Ht* ht) { return ht->len; }
 
-size_t ht_capacity(Ht* ht) {
-    return ht->cap;
-}
+size_t ht_capacity(Ht* ht) { return ht->cap; }
 
-static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn, FreeFn* value_free_fn) {
+static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn,
+                              FreeFn* value_free_fn) {
     if (key_free_fn) {
         key_free_fn(entry->data);
     }
@@ -307,7 +306,8 @@ static inline void entry_free(HtEntry* entry, FreeFn* key_free_fn, FreeFn* value
     free(entry);
 }
 
-static void ht_bucket_free(HtBucket* bucket, FreeFn* key_free_fn,  FreeFn* value_free_fn) {
+static void ht_bucket_free(HtBucket* bucket, FreeFn* key_free_fn,
+                           FreeFn* value_free_fn) {
     size_t i, len = bucket->len, cap = bucket->cap;
     if (cap == 0) {
         return;
